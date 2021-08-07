@@ -134,3 +134,4 @@ dmypy.json
 
 # .idea folder is Pycharm config file
 .idea/
+/.pycharm_helpers/
