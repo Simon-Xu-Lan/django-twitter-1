@@ -69,12 +69,13 @@ class AccountViewSet(viewsets.ViewSet):
         # queryset = User.objects.filter(username=username)
         # print(queryset.query)
 
+        # 下面验证用户不存在是可以放到serializer中进行
         # username不存在的情况
-        if not User.objects.filter(username=username).exists():
-            return Response({
-                "success": False,
-                "message": "User does not exist"
-            }, status=400)
+        # if not User.objects.filter(username=username).exists():
+        #     return Response({
+        #         "success": False,
+        #         "message": "User does not exist"
+        #     }, status=400)
 
         user = django_authenticate(username=username, password=password) # 只有authenticate后的user， 才能用来login， 不然会出错
         if not user or user.is_anonymous:

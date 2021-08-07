@@ -14,6 +14,14 @@ class LoginSerializer(serializers.Serializer):
     # 检测是否有username和password这两项
 
 
+    def validate(self, data):
+        if not User.objects.filter(username=data['username'].lower()).exists():
+            raise exceptions.ValidationError({
+                'username': 'User does not exist'
+            })
+        return data
+
+
 class SignupSerializer(serializers.ModelSerializer): # 用modelSerializer, 在调用seriralizer.save时能够把这个用户实际创建出来
     username = serializers.CharField(max_length=20, min_length=6)
     password = serializers.CharField(max_length=20, min_length=6)
@@ -29,12 +37,16 @@ class SignupSerializer(serializers.ModelSerializer): # 用modelSerializer, 在�
         # 看看username有没有重复（小写情况下）， 如果有重复就抛出异常
         if User.objects.filter(username=data['username'].lower()).exists():
             raise exceptions.ValidationError({
-                'message': 'This username has been occupied'
+
+                'username': 'This username has been occupied'
+
             })
         # 看看email有没有重复（小写情况下）， 如果有重复就抛出异常
         if User.objects.filter(email=data['email'].lower()).exists():
             raise exceptions.ValidationError({
-                'message': 'This email address has been occupied'
+
+                'email': 'This email address has been occupied'
+
             })
         # 如果以上通过就返回data， 这里没有对data做特别处理
         return data
