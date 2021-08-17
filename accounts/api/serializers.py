@@ -28,7 +28,7 @@ class SignupSerializer(serializers.ModelSerializer): # 用modelSerializer, 在�
     email = serializers.EmailField()
 
     class Meta:
-        model = User #指定model是User， 对应数据库重的user表
+        model = User #指定model是User， 对应数据库中的user表
         fields = ('username', 'email', 'password') # 指定field有些什么， 如果user表单中还有其他fields, 我们在这次创建中是不会添加的
 
     def validate(self, data):

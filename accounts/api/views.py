@@ -30,7 +30,10 @@ class AccountViewSet(viewsets.ViewSet):
     @action(methods=['GET'], detail=False)
     def login_status(self, request):
         # 定义返回data是dict format
-        data = {'has_logged_in': request.user.is_authenticated}
+        data = {
+            'has_logged_in': request.user.is_authenticated,
+            'ip': request.META['REMOTE_ADDR']
+        }
         if request.user.is_authenticated:
             # UserSerializer从request里拿到user的数据， 然后转化成json格式
             data['user'] = UserSerializer(request.user).data
