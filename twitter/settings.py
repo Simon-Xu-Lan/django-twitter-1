@@ -31,6 +31,9 @@ DEBUG = True
 # 下面三个是用本机访问的域名： ['127.0.0.1', '192.168.33.10', 'localhost']
 # 如果你想用域名访问，你就把自己买的域名放进来就可以了
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.33.10', 'localhost']
+# 上面的ip地址是从宿主机看虚拟机的IP地址
+# 下面的IP地址是从虚拟机看宿主机的地址
+INTERNAL_IPS = ['10.0.2.2']
 
 
 # Application definition
@@ -44,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'debug_toolbar',
+    'tweets',
 ]
 
 # 翻页机制
@@ -60,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'twitter.urls'
