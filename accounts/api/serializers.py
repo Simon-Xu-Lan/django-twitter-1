@@ -7,10 +7,15 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ['username', 'email']
 
+# 不想包含email信息，所以新建一个serializer
 class UserSerializerForTweet(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username')
+
+# 不想包含email信息，所以新建一个serializer
+class UserSerializerForFriendship(UserSerializerForTweet):
+    pass
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -31,10 +36,17 @@ class SignupSerializer(serializers.ModelSerializer): # 用modelSerializer, 在�
     password = serializers.CharField(max_length=20, min_length=6)
     email = serializers.EmailField()
 
+    # 下面fields中指定的fields要和上面的一致，否则会报错。
     class Meta:
         model = User #指定model是User， 对应数据库中的user表
         fields = ('username', 'email', 'password') # 指定field有些什么， 如果user表单中还有其他fields, 我们在这次创建中是不会添加的
 
+    # this validate method will be called when is_valid() is called
+    # 加个下面这个validate method是做额外的验证， 不加这个validate的话，serializer就做上面field的验证
+    # 上面的Emailfield只会做绝对等于的比较， 不会做大小写转换
+    # 下面增加的validate去做大小写转换后的验证
+    # 前提是在存储username 和 email是存入小写
+    # __iexact 效率地，尽量不要用
     def validate(self, data):
         # user表单里寸的是小写，此时把用户输入的username转化成小写，然后到user表单中找，看看是否存在这个username
         # 这样做就可以忽略用户输入的大小写

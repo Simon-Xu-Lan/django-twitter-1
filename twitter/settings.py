@@ -33,7 +33,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.33.10', 'localhost']
 # 上面的ip地址是从宿主机看虚拟机的IP地址
 # 下面的IP地址是从虚拟机看宿主机的地址
-INTERNAL_IPS = ['10.0.2.2']
+INTERNAL_IPS = ['10.0.2.2'] # debug tool 需要宿主机的IP地址
 
 
 # Application definition
@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'debug_toolbar',
     'tweets',
+    'friendships',
+    'newsfeeds',
 ]
 
 # 翻页机制
