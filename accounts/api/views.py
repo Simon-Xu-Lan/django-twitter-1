@@ -27,15 +27,21 @@ class AccountViewSet(viewsets.ViewSet):
     # serializer_class = LoginSerializer
     serializer_class = SignupSerializer
 
+    # detail=False: 意思是url不是accounts/pk/login_status, 而是accounts/login_status, 即不需要在主资源目录下加pk。是针对所有的accounts， 不是某个具体的account
+    # 如果改成的tail=true，那需要这样修改
+        # @action(methods=['GET'], detail=True)
+        # def login_status(self, request， pk):
+        # urls会是： api/accounts/1/login_status
+    # self，request这两个参数是默认自带的，所以要包括
     @action(methods=['GET'], detail=False)
     def login_status(self, request):
         # 定义返回data是dict format
         data = {
-            'has_logged_in': request.user.is_authenticated,
-            'ip': request.META['REMOTE_ADDR']
+            'has_logged_in': request.user.is_authenticated, #如果登录，is_authenticated返回True， 否则False
+            'ip': request.META['REMOTE_ADDR']  # get 宿主机 IP地址
         }
         if request.user.is_authenticated:
-            # UserSerializer从request里拿到user的数据， 然后转化成json格式
+            # UserSerializer从request里拿到user的数据， 然后转化成json格式，serrialize data into json format.
             data['user'] = UserSerializer(request.user).data
         # 把data放入Response，并返回Response
         return Response(data)
@@ -51,13 +57,21 @@ class AccountViewSet(viewsets.ViewSet):
     @action(methods=['POST'], detail=False)
     def logout(self, request):
         django_logout(request)
-        return Response({'success': True})
+        return Response({'success': True}) # status=200是默认的，不需要特别写出
 
     @action(methods=['POST'], detail=False)
     def login(self, request):
         # 从request得到用户信息username和password， 然后去登录
         # get username and password from request
-        serializer = LoginSerializer(data=request.data) # 如果是GET method， 我们从这里拿到data： data=request.query_params
+        # 如果是GET method， 我们从这里拿到data： data=request.query_params
+        # POST method是从 request.date 拿数据， request.data就是用户POST请求的数据
+        # 先把数据传给serializer，进行数据验证。
+        # 建立一个serializer的实例
+        serializer = LoginSerializer(data=request.data)
+        # is_valid(）回去调用验证，验证会根据在serializer中设的field进行验证
+            # 就是根据下面两个field进行验证：
+            # username = serializers.CharField()
+            # password = serializers.CharField()
         if not serializer.is_valid():
             return Response({
                 "success": False,
@@ -65,7 +79,8 @@ class AccountViewSet(viewsets.ViewSet):
                 "errors": serializer.errors,
             }, status=400)  # 400是客户端的错误
         # validation ok, login
-        username = serializer.validated_data['username'] #从经过验证后的validated_data中取数据
+        # 从经过验证后的validated_data中取数据
+        username = serializer.validated_data['username']
         password = serializer.validated_data['password']
 
         # debug技巧, 以下语句在vagrant terminal 打印出SQL语句
@@ -80,14 +95,17 @@ class AccountViewSet(viewsets.ViewSet):
         #         "message": "User does not exist"
         #     }, status=400)
 
-        user = django_authenticate(username=username, password=password) # 只有authenticate后的user， 才能用来login， 不然会出错
+        # 只有authenticate后的user， 才能用来login， 不然会出错
+        user = django_authenticate(username=username, password=password)
         if not user or user.is_anonymous:
             return Response({
                 "success": False,
                 "message": "Username and password does not match"
             }, status=400)
 
+        # 完成login
         django_login(request, user)
+
         return Response({
             "success": True,
             "user": UserSerializer(instance=user).data  #此时instance=也可以不写，UserSerializer(user)， 第一个参数是instance
@@ -95,10 +113,13 @@ class AccountViewSet(viewsets.ViewSet):
             
     @action(methods=['POST'], detail=False)
     def signup(self, request):
-        # 这样写是创建
-        serializer = SignupSerializer(data=request.data) #第一个参数是instance， 所以要用data=request.data， 否则会赋给instance
+        # 这样写是创建， 没有传具体instance进去，这个操作就是创建
+        # 第一个参数是instance， 所以要用data=request.data， 否则会赋给instance
+        serializer = SignupSerializer(data=request.data)
+        # 下面这样写是更新，不是创建
+        # serializer = SignupSerializer(instance=request.user, data=request.data)
         # 下面这样写是更新，而不是创建
-        # serializer = SignupSerializer(instance=request.user, request.data)
+            # serializer = SignupSerializer(instance=request.user, request.data)
         if not serializer.is_valid():
             return Response({
                 "success": False,
