@@ -21,7 +21,7 @@ class FriendshipApiTests(TestCase):
     # 每次调用TweetApiTests类下面的test_开头的方法 之前，都会先去执行setUp方法，
     # 所以我们可以将每 个test_xx方法公用的初始化信息都写在这里。
     def setUp(self):
-        self.anonymous_client = APIClient()
+        # self.anonymous_client = APIClient() # no need
 
         # user1, user2 are authenticated
         self.user1 = self.create_user('user1')
