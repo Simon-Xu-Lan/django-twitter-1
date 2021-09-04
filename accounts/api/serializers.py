@@ -13,9 +13,15 @@ class UserSerializerForTweet(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username')
 
+
+class UserSerializerForComment(serSerializerForTweet):
+    pass
+
+
 # 不想包含email信息，所以新建一个serializer
 class UserSerializerForFriendship(UserSerializerForTweet):
     pass
+
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()

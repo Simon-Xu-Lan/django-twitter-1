@@ -14,14 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from accounts.api.views import UserViewSet, AccountViewSet
+from comments.api.views import CommentViewSet
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework import routers
-from accounts.api.views import UserViewSet, AccountViewSet
-from tweets.api.views import TweetViewSet
-# from friendships.api.views import FriendshipViewSet
 from friendships.api.views import FriendshipViewSet
 from newsfeeds.api.views import NewsFeedViewSet
+from rest_framework import routers
+from tweets.api.views import TweetViewSet
 
 import debug_toolbar
 
@@ -33,6 +33,7 @@ router.register(r'api/accounts', AccountViewSet, basename='accounts') #为了避
 router.register(r'api/tweets', TweetViewSet, basename='tweets') # 对应TweetViewSet里面的所有url， for example, api/tweets/
 router.register(r'api/friendships', FriendshipViewSet, basename='friendships')
 router.register(r'api/newsfeeds', NewsFeedViewSet, basename='newsfeeds')
+router.register(r'api/comments', CommentViewSet, basename='comments')
 
 # Django框架的URL是写在urlpatterns里面
 # Django是用for循环来匹配urls
