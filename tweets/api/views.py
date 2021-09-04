@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from tweets.api.serializers import TweetSerializer, TweetSerializerForCreate
 from tweets.models import Tweet
+from newsfeeds.services import NewsFeedService
 
 
 class TweetViewSet(viewsets.GenericViewSet):
@@ -47,6 +48,8 @@ class TweetViewSet(viewsets.GenericViewSet):
             }, status=400)
         # save() will call create() method in TweetSerializerForCreate in serializers.py
         tweet = serializer.save()
+        # 创建newsfeed
+        NewsFeedService.fanout_to_followers(tweet)
 
         # When to display data, use the serializer for display, not use serializer for create
         # 下面是去展示tweet，所以要用 TweetSerializer, 而不是 TweetSerializerForCreate

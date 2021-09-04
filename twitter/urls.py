@@ -21,6 +21,7 @@ from accounts.api.views import UserViewSet, AccountViewSet
 from tweets.api.views import TweetViewSet
 # from friendships.api.views import FriendshipViewSet
 from friendships.api.views import FriendshipViewSet
+from newsfeeds.api.views import NewsFeedViewSet
 
 import debug_toolbar
 
@@ -31,6 +32,7 @@ router.register(r'api/users', UserViewSet)
 router.register(r'api/accounts', AccountViewSet, basename='accounts') #为了避免冲突，需要有一个 basename，不加不行
 router.register(r'api/tweets', TweetViewSet, basename='tweets') # 对应TweetViewSet里面的所有url， for example, api/tweets/
 router.register(r'api/friendships', FriendshipViewSet, basename='friendships')
+router.register(r'api/newsfeeds', NewsFeedViewSet, basename='newsfeeds')
 
 # Django框架的URL是写在urlpatterns里面
 # Django是用for循环来匹配urls
