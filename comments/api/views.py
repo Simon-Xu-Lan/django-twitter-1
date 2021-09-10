@@ -18,6 +18,16 @@ class CommentViewSet(viewsets.GenericViewSet):
 
     serializer_class = CommentSerializerForCreate
     queryset = Comment.objects.all()
+    # 只有一项时，逗号必须加，不然就是tuple
+    filterset_fields = ('tweet_id',)
+
+    # POST /api/comments/ -> create
+    # GET /api/comments/ -> list
+    # GET /api/comments/1/ -> retrieve
+    # DELETE /api/comments/1/ -> destroy
+    # PATCH /api/comments/1/ -> partial_update
+    # PUT /api/comments/1/ -> update
+
 
     def get_permissions(self):
         # 注意要加括号 AllowAny() / IsAuthenticated() 实例化出对象
@@ -27,6 +37,43 @@ class CommentViewSet(viewsets.GenericViewSet):
         if self.action in ['destroy', 'update']:
             return [IsAuthenticated(), IsObjectOwner()]
         return [AllowAny()]
+
+    # 通常把list写在靠前的位置
+    # comments list permission is allowany
+    def list(self, request, *args, **kwargs):
+        # /api/comments/?tweet_id=1
+        if 'tweet_id' not in request.query_params:
+            return Response(
+                {
+                    'message': 'missing tweet_id in request',
+                    'success': False,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Solution 1
+        # Filter comments by tweet_id
+        # 此时不需要做类型转换N
+        # tweet_id = request.query_params["tweet_id"]
+        # comments = Comment.objects.filter(tweet_id=tweet_id).order_by('created_at')
+        # 下面这句话和上面这就话是兼容的
+        # 原因是Django自动做了转换， 在Comment model 定义了tweet这个attribute
+        # 这是tweet是个实例，但是接到一个数字，那就按照数字处理，当作tweet_id
+        # Comment.objects.filter(tweet=tweet_id)
+
+        # Solution 2
+        queryset = self.get_queryset()
+        comments = self.filter_queryset(queryset)\
+            .prefetch_related('user')\
+            .order_by('created_at')
+        # prefetch_related 优化处理
+
+        # many=True 表示返回是list of dict
+        serializer = CommentSerializer(comments, many=True)
+        # 不直接写 serializer.data 是因为return 风格的要求： 返回必须是个dict， 不能是list
+        return Response(
+            {"comments": serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     def create(self, request, *args, **kwargs):
         data = {
