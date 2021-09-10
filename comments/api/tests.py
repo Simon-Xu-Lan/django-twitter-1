@@ -111,6 +111,7 @@ class CommentApiTests(TestCase):
         self.assertNotEqual(comment.created_at, now)
         self.assertNotEqual(comment.updated_at, before_update_at)
 
+
     def test_list(self):
         # 必须带 tweet_id
         response = self.anonymous_client.get(COMMENT_URL)
@@ -141,9 +142,6 @@ class CommentApiTests(TestCase):
             'user_id': self.linghu.id,
         })
         self.assertEqual(len(response.data["comments"]), 2)
-
-
-
 
 
 
