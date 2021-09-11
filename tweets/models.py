@@ -29,6 +29,13 @@ class Tweet(models.Model):
         # createed_at(): Django add time zone info to created_at automatically
         return (utc_now() - self.created_at).seconds // 3600
 
+    # 下面在model里面定义获取comment
+    # @property
+    # def comments(self):
+    #     return Comment.objects.filter(tweet=self)
+    #       or
+    #     return self.comment_set.all()
+
     def __str__(self):
         # 这里是你执行 print(tweet instance) 的时候会显示的内容
         # Django damin site use it to display an object

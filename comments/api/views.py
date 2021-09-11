@@ -8,6 +8,7 @@ from comments.api.serializers import (
     CommentSerializerForUpdate,
 )
 from comments.api.permissions import IsObjectOwner
+from utils.decorators import required_params
 
 
 class CommentViewSet(viewsets.GenericViewSet):
@@ -40,16 +41,19 @@ class CommentViewSet(viewsets.GenericViewSet):
 
     # 通常把list写在靠前的位置
     # comments list permission is allowany
+    @required_params(params=['tweet_id'])
     def list(self, request, *args, **kwargs):
         # /api/comments/?tweet_id=1
-        if 'tweet_id' not in request.query_params:
-            return Response(
-                {
-                    'message': 'missing tweet_id in request',
-                    'success': False,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # the following block (check params) is moved to the decorator "required_params"
+        # if 'tweet_id' not in request.query_params:
+        #     return Response(
+        #         {
+        #             'message': 'missing tweet_id in request',
+        #             'success': False,
+        #         },
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
+
         # Solution 1
         # Filter comments by tweet_id
         # 此时不需要做类型转换N
