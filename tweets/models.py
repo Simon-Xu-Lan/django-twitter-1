@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from utils.time_helper import utc_now
+from likes.models import Like
+from django.contrib.contenttypes.models import ContentType
 
 
 class Tweet(models.Model):
@@ -18,6 +20,7 @@ class Tweet(models.Model):
 
     class Meta:
         index_together = (('user', 'created_at'),) #联合索引是需要在class Meta中指定
+        # ordering 为查询操作指定默认排序规则， 先按照user升序排序，再按created_at降序排序
         # ordering设定了queryset的排序
         # ordering 对数据库不会产生影响，只会对queryset产生影响
         # -created是倒序排列
@@ -36,8 +39,19 @@ class Tweet(models.Model):
     #       or
     #     return self.comment_set.all()
 
+    @property
+    def like_set(self):
+        return Like.objects.filter(
+            content_type=ContentType.objects.get_for_model(Tweet),
+            object_id=self.id,
+        ).order_by('-created_at')
+
     def __str__(self):
         # 这里是你执行 print(tweet instance) 的时候会显示的内容
         # Django damin site use it to display an object
         return f'{self.user} {self.created_at} : {self.content}'
 
+
+# Each field is specified as a class attribute,
+# and each attribute maps to a database column.
+# id field is added automatically.

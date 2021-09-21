@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.test import TestCase as DjangoTestCase
 from rest_framework.test import APIClient
 from tweets.models import Tweet
+from likes.models import Like
+from django.contrib.contenttypes.models import ContentType
+
 
 class TestCase(DjangoTestCase):
 
@@ -42,4 +45,24 @@ class TestCase(DjangoTestCase):
         if content is None:
             content = 'default comment content'
         return Comment.objects.create(user=user, tweet=tweet, content=content)
+
+    def create_like(self, user, target):
+        # 第二个返回结果是created or not.
+        # Returns a tuple of (object, created),
+        # where object is the retrieved or created object
+        # created is a boolean specifying whether a new object was created.
+        instance, _ = Like.objects.get_or_create(
+            # target.__class__: get the class name of target
+            # Then get the content type of the class name
+            content_type=ContentType.objects.get_for_model(target.__class__),
+            object_id=target.id,
+            user=user,
+        )
+        # 此时不可以用create， 因为有可能会违反数据库model设定的唯一性约束。
+        # instance = Like.objects.create(
+        #     content_type_id=ContentType.objects.get_for_model(target.__class__),
+        #     object_id=target.id,
+        #     user=user,
+        # )
+        return instance
 
