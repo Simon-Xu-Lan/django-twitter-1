@@ -54,6 +54,7 @@ class TestCase(DjangoTestCase):
         instance, _ = Like.objects.get_or_create(
             # target.__class__: get the class name of target
             # Then get the content type of the class name
+            # 这个方法可以根据target class name 拿到 对应的 content_type_id
             content_type=ContentType.objects.get_for_model(target.__class__),
             object_id=target.id,
             user=user,

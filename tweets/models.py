@@ -39,6 +39,8 @@ class Tweet(models.Model):
     #       or
     #     return self.comment_set.all()
 
+    # 下面定义like_set
+    # tweet.like_set.all(): 找到这个tweet下面所有的like
     @property
     def like_set(self):
         return Like.objects.filter(
