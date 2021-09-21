@@ -36,6 +36,9 @@ class TweetViewSet(viewsets.GenericViewSet):
         tweets = Tweet.objects.filter(
             user_id=request.query_params['user_id']  # query_params['user_id']是个字符串，Django会自动转换成int
         ).order_by('-created_at')
+        # To serialize a queryset or list of objects instead of a single object instance,
+        # you should pass the many=True flag when instantiating the serializer.
+        # You can then pass a queryset or list of objects to be serialized.
         serializer = TweetSerializer(tweets, many=True) # many=True 表示 return list of dict
         return Response({'tweets': serializer.data}) # 一般来说 json 格式的 response 默认都要用 dict 的格式而不能用 list 的格式（约定俗成）在外面套一个dict 「'tweets': }
 

@@ -3,11 +3,13 @@ from testing.testcases import TestCase
 # Create your tests here.
 class CommentModelTests(TestCase):
 
+    def setUp(self):
+        self.user = self.create_user('linghu')
+        self.tweet = self.create_tweet(self.linghu)
+        self.comment = self.create_comment(self.user, self.tweet)
+
     def test_comment(self):
-        user = self.create_user('linghu')
-        tweet = self.create_tweet(user)
-        comment = self.create_comment(user, tweet)
-        self.assertNotEqual(comment.__str__(), None)
+        self.assertNotEqual(self.comment.__str__(), None)
         # comment_str = '{} - {} says {} at tweet {}'.format(
         #     comment.created_at,
         #     comment.user,
@@ -15,3 +17,17 @@ class CommentModelTests(TestCase):
         #     comment.tweet_id,
         # )
         # self.assertEqual(comment.__str__(), comment_str)
+
+    def test_like_set(self):
+        self.create_like(self.user, self.tweet)
+        self.assertEqual(self.comment.like_set.count(), 1)
+
+        # 不重复创建
+        self.create_like(self.user, self.tweet)
+        self.assertEqual(self.comment.like_set.count(), 1)
+
+        dongxie = self.create_user('dongxie')
+        self.create_like(dongxie, self.tweet)
+        self.assertEqual(self.comment.like_set.count(), 2)
+
+

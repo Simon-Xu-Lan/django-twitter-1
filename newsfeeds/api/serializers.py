@@ -8,4 +8,4 @@ class NewsFeedSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsFeed
         fields = ('id', 'created_at', 'tweet')
-        # user 不需要展示，这里的user就是登录的user
+        # user 不需要展示，因为这里的user就是登录的user

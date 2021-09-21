@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'friendships',
     'newsfeeds',
     'comments',
+    'likes',
 ]
 
 # 翻页机制

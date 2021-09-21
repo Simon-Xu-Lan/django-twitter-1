@@ -1,11 +1,17 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers, exceptions
 
+
+# HyperLinkedModelSerializer vs ModelSerializer
+# https://stackoverflow.com/questions/33421147/what-is-the-benefit-of-using-a-hyperlinkedmodelserializer-in-drf
+# The only difference is that primary and foreign keys are represented by URLs that point to those resources, instead of just actual key values.
+# The benefit is that you will not have to construct resource URLs in your frontend when you want to retrieve related objects.
+
 # userSerializer的作用： 取出user的数据，并变成json格式
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['id', 'username', 'email',]
 
 # 不想包含email信息，所以新建一个serializer
 class UserSerializerForTweet(serializers.ModelSerializer):
@@ -16,6 +22,16 @@ class UserSerializerForTweet(serializers.ModelSerializer):
 
 class UserSerializerForComment(UserSerializerForTweet):
     pass
+
+
+# By default the serializer will include a url field instead of a primary key field.
+# The url field will be represented using a HyperlinkedIdentityField serializer field,
+# and any relationships on the model will be represented using a HyperlinkedRelatedField serializer field.
+# You can explicitly include the primary key by adding it to the fields option, for example:
+# class UserSerializerForFriendship(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['url', 'id', 'username', 'email']
 
 
 # 不想包含email信息，所以新建一个serializer
