@@ -22,6 +22,7 @@ from friendships.api.views import FriendshipViewSet
 from newsfeeds.api.views import NewsFeedViewSet
 from rest_framework import routers
 from tweets.api.views import TweetViewSet
+from likes.api.views import LikeViewSet
 
 import debug_toolbar
 
@@ -39,6 +40,8 @@ router.register(r'api/tweets', TweetViewSet, basename='tweets') # 对应TweetVie
 router.register(r'api/friendships', FriendshipViewSet, basename='friendships')
 router.register(r'api/newsfeeds', NewsFeedViewSet, basename='newsfeeds')
 router.register(r'api/comments', CommentViewSet, basename='comments')
+router.register(r'api/likes', LikeViewSet, basename='likes')
+
 
 # Django框架的URL是写在urlpatterns里面
 # Django是用for循环来匹配urls
